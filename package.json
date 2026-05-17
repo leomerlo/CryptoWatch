@@ -7,6 +7,15 @@
   "scripts": {
     "dev": "npm run dev -w @cryptowatch/web",
     "build": "npm run build --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present"
+    "test": "npm run test --workspaces --if-present",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5"
+  },
+  "lint-staged": {
+    "packages/web/src/**/*.{ts,tsx}": ["eslint --fix --no-warn-ignored -c packages/web/eslint.config.js", "prettier --write"],
+    "packages/web/src/**/*.{css,md,json}": ["prettier --write"]
   }
 }
