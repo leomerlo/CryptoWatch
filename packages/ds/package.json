@@ -1,0 +1,19 @@
+{
+  "name": "ds",
+  "version": "1.0.0",
+  "description": "Design System for CryptoWatch",
+  "keywords": [
+    "Design",
+    "System"
+  ],
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "dependencies": {
+    "storybook": "^10.4.0"
+  }
+}
