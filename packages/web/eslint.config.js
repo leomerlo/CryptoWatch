@@ -15,6 +15,7 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    ignores: ['**/routeTree.gen.ts'],
     languageOptions: {
       globals: globals.browser,
     },
