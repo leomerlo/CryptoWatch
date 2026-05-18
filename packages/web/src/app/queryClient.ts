@@ -3,8 +3,12 @@ import { QueryClient } from '@tanstack/react-query'
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      gcTime: 5 * 60 * 1000,
       staleTime: 60_000,
-      retry: 2,
+      retry: (failureCount, error) => {
+        return failureCount < 2 && error instanceof Error && error.message.includes('Unauthorized')
+      },
+      refetchInterval: 60_000,
       refetchOnWindowFocus: true,
     },
   },
