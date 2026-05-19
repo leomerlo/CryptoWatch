@@ -8,9 +8,15 @@ interface UIStore {
 }
 
 const useUIStore = create<UIStore>((set) => ({
-  theme: (localStorage.getItem('cw-ui') as Theme) || 'system',
+  theme: (() => {
+    try {
+      return (localStorage.getItem('cw-ui') as Theme) || 'system'
+    } catch {
+      return 'system'
+    }
+  })(),
   setTheme: (theme: Theme) => {
-    set({ theme: theme })
+    set({ theme })
     localStorage.setItem('cw-ui', theme)
   },
 }))

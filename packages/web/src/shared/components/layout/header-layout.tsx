@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/shared/components/ui/input-group'
-import AvatarMenu from '@/shared/components/ui/header-layout/avatar-menu'
-import HeaderNavigation from '@/shared/components/ui/header-layout/header-navigation'
+import { AvatarMenu } from '@/shared/components/ui/header-layout/avatar-menu'
+import { HeaderNavigation } from '@/shared/components/ui/header-layout/header-navigation'
 import { SearchIcon } from 'lucide-react'
 
 const HeaderLayout = () => {
@@ -19,7 +19,7 @@ const HeaderLayout = () => {
           </div>
           <div className="flex items-center gap-2">
             <div>
-              <InputGroup>
+              <InputGroup aria-label="Search">
                 <InputGroupInput placeholder="Search..." />
                 <InputGroupAddon>
                   <SearchIcon />
@@ -34,4 +34,4 @@ const HeaderLayout = () => {
   )
 }
 
-export default HeaderLayout
+export { HeaderLayout }

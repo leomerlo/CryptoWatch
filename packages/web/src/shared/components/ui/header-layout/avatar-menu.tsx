@@ -9,7 +9,7 @@ import {
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../button'
 
-export default function AvatarMenu() {
+function AvatarMenu() {
   const navigate = useNavigate()
 
   return (
@@ -40,3 +40,5 @@ export default function AvatarMenu() {
     </DropdownMenu>
   )
 }
+
+export { AvatarMenu }

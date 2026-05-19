@@ -1,6 +1,7 @@
-import HeaderLayout from './header-layout'
+import type { ReactNode } from 'react'
+import { HeaderLayout } from './header-layout'
 
-const MainShell = ({ children }: { children: React.ReactNode }) => {
+const MainShell = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen">
       <HeaderLayout />
@@ -11,4 +12,4 @@ const MainShell = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-export default MainShell
+export { MainShell }

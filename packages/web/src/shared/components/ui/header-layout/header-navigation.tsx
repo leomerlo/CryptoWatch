@@ -48,4 +48,4 @@ const HeaderNavigation = () => {
   )
 }
 
-export default HeaderNavigation
+export { HeaderNavigation }
