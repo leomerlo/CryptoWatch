@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WatchlistRouteImport } from './routes/watchlist'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as LogoutRouteImport } from './routes/logout'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CoinsCoinIdRouteImport } from './routes/coins/$coinId'
@@ -23,6 +25,16 @@ const WatchlistRoute = WatchlistRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AlertsRoute = AlertsRouteImport.update({
@@ -44,6 +56,8 @@ const CoinsCoinIdRoute = CoinsCoinIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/settings': typeof SettingsRoute
   '/watchlist': typeof WatchlistRoute
   '/coins/$coinId': typeof CoinsCoinIdRoute
@@ -51,6 +65,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/settings': typeof SettingsRoute
   '/watchlist': typeof WatchlistRoute
   '/coins/$coinId': typeof CoinsCoinIdRoute
@@ -59,19 +75,23 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/alerts': typeof AlertsRoute
+  '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/settings': typeof SettingsRoute
   '/watchlist': typeof WatchlistRoute
   '/coins/$coinId': typeof CoinsCoinIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/alerts' | '/settings' | '/watchlist' | '/coins/$coinId'
+  fullPaths: '/' | '/alerts' | '/login' | '/logout' | '/settings' | '/watchlist' | '/coins/$coinId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/alerts' | '/settings' | '/watchlist' | '/coins/$coinId'
+  to: '/' | '/alerts' | '/login' | '/logout' | '/settings' | '/watchlist' | '/coins/$coinId'
   id:
     | '__root__'
     | '/'
     | '/alerts'
+    | '/login'
+    | '/logout'
     | '/settings'
     | '/watchlist'
     | '/coins/$coinId'
@@ -80,6 +100,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlertsRoute: typeof AlertsRoute
+  LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
   SettingsRoute: typeof SettingsRoute
   WatchlistRoute: typeof WatchlistRoute
   CoinsCoinIdRoute: typeof CoinsCoinIdRoute
@@ -99,6 +121,20 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/alerts': {
@@ -128,6 +164,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlertsRoute: AlertsRoute,
+  LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
   SettingsRoute: SettingsRoute,
   WatchlistRoute: WatchlistRoute,
   CoinsCoinIdRoute: CoinsCoinIdRoute,
