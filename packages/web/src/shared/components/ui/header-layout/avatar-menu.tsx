@@ -8,25 +8,33 @@ import {
 } from '../dropdown-menu'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../button'
+import { useAppStore } from '@/stores'
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((word) => word[0])
+    .join('')
+}
 
 function AvatarMenu() {
   const navigate = useNavigate()
+  const { session } = useAppStore()
 
-  return (
-    <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" aria-label="Login">
-      <UserIcon className="w-4 h-4" />
-    </Button>
-  )
+  if (!session?.user)
+    return (
+      <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" aria-label="Login">
+        <UserIcon className="w-4 h-4" />
+      </Button>
+    )
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="w-8 h-8 rounded-lg bg-gray-200">
-          <img
-            src="https://github.com/shadcn.png"
-            alt="Avatar"
-            className="w-full h-full rounded-lg"
-          />
+        <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center">
+          <span className="text-sm font-medium text-black capitalize">
+            {getInitials(session.user.email!)}
+          </span>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
