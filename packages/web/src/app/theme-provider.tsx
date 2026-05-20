@@ -1,4 +1,4 @@
-import useUIStore, { type Theme } from '@/stores/uiStore'
+import { useAppStore, type Theme } from '@/stores'
 import { useEffect, type ReactNode } from 'react'
 
 type ThemeProviderProps = {
@@ -17,14 +17,14 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps): ReactNode {
-  const theme = useUIStore((state) => state.theme)
+  const theme = useAppStore((state) => state.theme)
 
   useEffect(() => {
     applyTheme(theme)
 
     const media = window.matchMedia('(prefers-color-scheme: dark)')
     const onSystemChange = () => {
-      if (useUIStore.getState().theme === 'system') {
+      if (useAppStore.getState().theme === 'system') {
         applyTheme('system')
       }
     }
