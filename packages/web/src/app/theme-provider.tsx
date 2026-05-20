@@ -1,18 +1,18 @@
-import { useAppStore, type Theme } from '@/stores'
+import { useAppStore, type UISlice } from '@/stores'
 import { useEffect, type ReactNode } from 'react'
 
 type ThemeProviderProps = {
   children: ReactNode
 }
 
-function resolveTheme(theme: Theme): 'light' | 'dark' {
+function resolveTheme(theme: UISlice['theme']): 'light' | 'dark' {
   if (theme === 'system') {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   }
   return theme
 }
 
-function applyTheme(theme: Theme) {
+function applyTheme(theme: UISlice['theme']) {
   document.documentElement.classList.toggle('dark', resolveTheme(theme) === 'dark')
 }
 
