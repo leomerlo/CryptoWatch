@@ -10,6 +10,9 @@ export function useSession() {
   useEffect(() => {
     let mounted = true
 
+    router.update({ context: { auth: { session: null, isLoading: true } } })
+    router.invalidate()
+
     const sync = (session: Session | null, isLoading = false) => {
       setSession(session)
       router.update({
