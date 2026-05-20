@@ -8,25 +8,38 @@ import {
 } from '../dropdown-menu'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '../button'
+import { useAppStore } from '@/stores'
+import type { User } from '@supabase/supabase-js'
+
+function getInitials(user: User) {
+  const name = user.user_metadata?.full_name as string | undefined
+  if (name)
+    return name
+      .split(' ')
+      .map((w) => w[0])
+      .join('')
+      .toUpperCase()
+  return (user.email ?? '?')[0].toUpperCase()
+}
 
 function AvatarMenu() {
   const navigate = useNavigate()
+  const { session } = useAppStore()
 
-  return (
-    <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" aria-label="Login">
-      <UserIcon className="w-4 h-4" />
-    </Button>
-  )
+  if (!session)
+    return (
+      <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" aria-label="Login">
+        <UserIcon className="w-4 h-4" />
+      </Button>
+    )
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="w-8 h-8 rounded-lg bg-gray-200">
-          <img
-            src="https://github.com/shadcn.png"
-            alt="Avatar"
-            className="w-full h-full rounded-lg"
-          />
+        <div className="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center">
+          <span className="text-sm font-medium text-black capitalize">
+            {session.user ? getInitials(session.user as User) : '?'}
+          </span>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
