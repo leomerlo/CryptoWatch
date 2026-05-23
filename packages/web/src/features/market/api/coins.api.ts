@@ -8,7 +8,7 @@ export async function fetchCoinsList(params: CoinsListParams): Promise<Coin[]> {
 
   const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coingecko/coins/markets`)
   url.searchParams.set('page', page?.toString() ?? '1')
-  url.searchParams.set('per_page', '100')
+  url.searchParams.set('per_page', '20')
   url.searchParams.set('vs_currency', 'usd')
   url.searchParams.set('sparkline', 'true')
   url.searchParams.set('price_change_percentage', '24h')

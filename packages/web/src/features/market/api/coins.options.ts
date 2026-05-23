@@ -11,6 +11,5 @@ export function coinsListQueryOptions(params: CoinsListParams) {
     gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnMount: false,
-    refetchInterval: false,
   })
 }

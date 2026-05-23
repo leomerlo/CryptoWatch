@@ -5,7 +5,7 @@ const MainShell = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen">
       <HeaderLayout />
-      <main className="flex-1 container mx-auto px-4 py-2 overflow-y-auto max-w-6xl">
+      <main className="flex-1 container mx-auto px-4 py-2 overflow-y-auto max-w-6xl pb-12">
         {children}
       </main>
     </div>

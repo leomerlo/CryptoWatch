@@ -95,6 +95,8 @@
   --sidebar-border: oklch(0.922 0 0);
 
   --sidebar-ring: oklch(0.708 0 0);
+
+  --table-background: oklch(0.985 0 0);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -115,7 +117,6 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  text-align: center;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -211,6 +212,8 @@ code {
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --text-2xs: 11px;
+  --color-table-background: var(--table-background);
 }
 
 .dark {
@@ -245,6 +248,7 @@ code {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --table-background: #18181b;
 }
 
 @layer base {

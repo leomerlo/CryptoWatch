@@ -9,6 +9,7 @@ export const GlobalMarketSchema = z.object({
       eth: z.number().optional(),
     }),
     market_cap_change_percentage_24h_usd: z.number().optional(),
+    active_cryptocurrencies: z.number(),
     updated_at: z.number(),
   }),
 })
