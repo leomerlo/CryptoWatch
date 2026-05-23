@@ -9,7 +9,7 @@ import {
 } from '@/shared/components/ui/pagination'
 import { cn } from '@/shared/lib/utils'
 
-const SIBLING_COUNT = 3
+const SIBLING_COUNT = 2
 
 type PageItem = number | 'ellipsis'
 

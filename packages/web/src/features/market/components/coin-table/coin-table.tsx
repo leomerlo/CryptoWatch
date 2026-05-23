@@ -17,7 +17,8 @@ import {
 import { cn } from '@/shared/lib/utils'
 import CoinSparkline from '@/features/market/components/coin-table/coin-sparkline'
 import { formatCurrency } from '@/shared/utils'
-import CoinPagination from './coin-pagination'
+import CoinPagination from '@/features/market/components/coin-table/coin-pagination'
+import CoinTableSkeleton from '@/features/market/components/coin-table/coin-table-skeleton'
 import { useState } from 'react'
 import { useGlobalMarket } from '@/features/market/api/use-global'
 
@@ -104,7 +105,7 @@ const CoinTable = () => {
     getCoreRowModel: getCoreRowModel(),
   })
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <CoinTableSkeleton />
   if (error) return <div>Error: {error?.message}</div>
   if (!data) return <div>No data</div>
 
