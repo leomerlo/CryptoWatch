@@ -2,30 +2,45 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { SortingState } from '@tanstack/react-table'
+
 import CoinTable from '@/features/market/components/coin-table/coin-table'
-import { mockCoin, mockGlobalMarket } from '@/test/fixtures/market'
+import { mockCoin, mockEthereum } from '@/test/fixtures/market'
 
 const useCoinsMock = vi.fn()
-const useGlobalMarketMock = vi.fn()
+const prefetchCoinMock = vi.fn()
+
+const storeState = vi.hoisted(() => ({
+  marketSorting: [] as SortingState,
+  setMarketSorting: vi.fn(),
+}))
+
+vi.mock('@/stores', () => ({
+  useAppStore: (selector: (state: typeof storeState) => unknown) => selector(storeState),
+}))
 
 vi.mock('@/features/market/api/use-coins', () => ({
   useCoins: (params: unknown) => useCoinsMock(params),
 }))
 
-vi.mock('@/features/market/api/use-global', () => ({
-  useGlobalMarket: () => useGlobalMarketMock(),
+vi.mock('@/features/market/api/use-prefetch-coin', () => ({
+  usePrefetchCoin: () => prefetchCoinMock,
+}))
+
+vi.mock('@/shared/hooks/useDebounce', () => ({
+  useDebounce: (value: string) => value,
+}))
+
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({ children }: { children: React.ReactNode }) => <a href="#">{children}</a>,
 }))
 
 describe('CoinTable', () => {
   beforeEach(() => {
     useCoinsMock.mockReset()
-    useGlobalMarketMock.mockReset()
-
-    useGlobalMarketMock.mockReturnValue({
-      data: mockGlobalMarket,
-      isLoading: false,
-      error: null,
-    })
+    prefetchCoinMock.mockReset()
+    storeState.marketSorting = []
+    storeState.setMarketSorting.mockReset()
   })
 
   it('renders a loading state', () => {
@@ -53,16 +68,20 @@ describe('CoinTable', () => {
     expect(screen.getByText('Error: Failed to load coins')).toBeInTheDocument()
   })
 
-  it('renders a no-data message', () => {
+  it('renders an empty state when no coins match the search', async () => {
+    const user = userEvent.setup()
+
     useCoinsMock.mockReturnValue({
-      data: undefined,
+      data: [mockCoin],
       isLoading: false,
       error: null,
     })
 
     render(<CoinTable />)
 
-    expect(screen.getByText('No data')).toBeInTheDocument()
+    await user.type(screen.getByRole('textbox'), 'zzz')
+
+    expect(screen.queryByText('Bitcoin')).not.toBeInTheDocument()
   })
 
   it('renders coin rows and table headers', () => {
@@ -82,7 +101,7 @@ describe('CoinTable', () => {
     expect(screen.getByText('+2.5%')).toBeInTheDocument()
   })
 
-  it('requests coins for the current page', () => {
+  it('requests the full coin list for client-side pagination', () => {
     useCoinsMock.mockReturnValue({
       data: [mockCoin],
       isLoading: false,
@@ -93,11 +112,47 @@ describe('CoinTable', () => {
 
     expect(useCoinsMock).toHaveBeenCalledWith({
       page: 1,
+      perPage: 250,
       filters: { category: 'all' },
     })
   })
 
   it('updates page when pagination is used', async () => {
+    const user = userEvent.setup()
+    const coins = Array.from({ length: 25 }, (_, index) => ({
+      ...mockCoin,
+      id: `coin-${index}`,
+      name: `Coin ${index}`,
+      market_cap_rank: index + 1,
+    }))
+
+    useCoinsMock.mockReturnValue({
+      data: coins,
+      isLoading: false,
+      error: null,
+    })
+
+    render(<CoinTable />)
+
+    await user.click(screen.getByRole('button', { name: '2' }))
+
+    expect(screen.getByText('Coin 20')).toBeInTheDocument()
+    expect(screen.queryByText('Coin 0')).not.toBeInTheDocument()
+  })
+
+  it('uses a fixed total page count for pagination', () => {
+    useCoinsMock.mockReturnValue({
+      data: [mockCoin],
+      isLoading: false,
+      error: null,
+    })
+
+    render(<CoinTable />)
+
+    expect(screen.getByRole('button', { name: '13' })).toBeInTheDocument()
+  })
+
+  it('refetches coins when a category filter is selected', async () => {
     const user = userEvent.setup()
 
     useCoinsMock.mockReturnValue({
@@ -108,23 +163,48 @@ describe('CoinTable', () => {
 
     render(<CoinTable />)
 
-    await user.click(screen.getByRole('button', { name: '2' }))
+    await user.click(screen.getByRole('button', { name: 'DeFi' }))
 
     expect(useCoinsMock).toHaveBeenLastCalledWith({
-      page: 2,
-      filters: { category: 'all' },
+      page: 1,
+      perPage: 250,
+      filters: { category: 'decentralized-finance-defi' },
     })
   })
 
-  it('derives total pages from global market data', () => {
+  it('filters coins locally by name', async () => {
+    const user = userEvent.setup()
+
     useCoinsMock.mockReturnValue({
-      data: [mockCoin],
+      data: [mockCoin, mockEthereum],
       isLoading: false,
       error: null,
     })
 
     render(<CoinTable />)
 
-    expect(screen.getByRole('button', { name: '5' })).toBeInTheDocument()
+    await user.type(screen.getByRole('textbox'), 'eth')
+
+    expect(screen.getByText('Ethereum')).toBeInTheDocument()
+    expect(screen.queryByText('Bitcoin')).not.toBeInTheDocument()
+  })
+
+  it('prefetches coin details on row hover', async () => {
+    const user = userEvent.setup()
+
+    useCoinsMock.mockReturnValue({
+      data: [mockCoin],
+      isLoading: false,
+      error: null,
+    })
+
+    const { container } = render(<CoinTable />)
+
+    const row = container.querySelector('tbody [data-slot="table-row"]')
+    expect(row).not.toBeNull()
+
+    await user.hover(row!)
+
+    expect(prefetchCoinMock).toHaveBeenCalledWith('bitcoin')
   })
 })

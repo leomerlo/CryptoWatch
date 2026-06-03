@@ -7,7 +7,7 @@ const CoinPage = () => {
   const { coinId } = coinRoute.useParams()
   const { data, isLoading } = useCoin(coinId)
 
-  if (!isLoading) return <div>Loading...</div>
+  if (isLoading) return <div>Loading...</div>
 
   return (
     <div>

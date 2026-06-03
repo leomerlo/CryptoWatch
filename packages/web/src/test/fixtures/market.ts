@@ -13,6 +13,19 @@ export const mockCoin: Coin = {
   sparkline_in_7d: { price: [48_000, 49_000, 50_000, 51_000] },
 }
 
+export const mockEthereum: Coin = {
+  id: 'ethereum',
+  symbol: 'eth',
+  name: 'Ethereum',
+  image: 'https://example.com/eth.png',
+  current_price: 3_000,
+  market_cap: 400_000_000_000,
+  market_cap_rank: 2,
+  total_volume: 20_000_000_000,
+  price_change_percentage_24h: -1.2,
+  sparkline_in_7d: { price: [2_900, 3_000, 2_950] },
+}
+
 export const mockGlobalMarket = {
   totalMarketCap: 2_500_000_000_000,
   volume24h: 120_000_000_000,
