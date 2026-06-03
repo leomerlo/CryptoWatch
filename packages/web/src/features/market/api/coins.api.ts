@@ -4,11 +4,11 @@ import { z } from 'zod'
 import { CoinSchema } from '@/features/market/types/coin'
 
 export async function fetchCoinsList(params: CoinsListParams): Promise<Coin[]> {
-  const { page, filters } = params
+  const { page, perPage, filters } = params
 
   const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coingecko/coins/markets`)
   url.searchParams.set('page', page?.toString() ?? '1')
-  url.searchParams.set('per_page', '20')
+  url.searchParams.set('per_page', perPage?.toString() ?? '20')
   url.searchParams.set('vs_currency', 'usd')
   url.searchParams.set('sparkline', 'true')
   url.searchParams.set('price_change_percentage', '24h')
@@ -23,4 +23,14 @@ export async function fetchCoinsList(params: CoinsListParams): Promise<Coin[]> {
 
   const json = await res.json()
   return z.array(CoinSchema).parse(json)
+}
+
+export async function fetchCoinDetails(id: string) {
+  const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coingecko/coins/${id}`)
+
+  const res = await fetch(url.toString())
+  if (!res.ok) throw new Error('Failed to fetch coin details')
+
+  const json = await res.json()
+  return CoinSchema.parse(json)
 }

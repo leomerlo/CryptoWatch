@@ -1,5 +1,6 @@
 export type CoinsListParams = {
   page?: number
+  perPage?: number
   filters?: Record<string, unknown>
 }
 
