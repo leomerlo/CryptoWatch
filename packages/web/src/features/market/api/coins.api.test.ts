@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchCoinDetails, fetchCoinsList } from '@/features/market/api/coins.api'
-import { mockCoin } from '@/test/fixtures/market'
+import { fetchCoinDetails, fetchCoinOhlc, fetchCoinsList } from '@/features/market/api/coins.api'
+import {
+  mockCoin,
+  mockCoinDetails,
+  mockCoinGeckoDetailRaw,
+  mockCoinOhlc,
+} from '@/test/fixtures/market'
 
 describe('coins.api', () => {
   const fetchMock = vi.fn()
@@ -74,23 +79,49 @@ describe('coins.api', () => {
   })
 
   describe('fetchCoinDetails', () => {
-    it('requests coin details by id', async () => {
+    it('requests coin details by id with trimmed query params', async () => {
       fetchMock.mockResolvedValue({
         ok: true,
-        json: async () => mockCoin,
+        json: async () => mockCoinGeckoDetailRaw,
       })
 
       const result = await fetchCoinDetails('bitcoin')
 
       const url = new URL(fetchMock.mock.calls[0][0] as string)
       expect(url.pathname).toBe('/functions/v1/coingecko/coins/bitcoin')
-      expect(result).toEqual(mockCoin)
+      expect(url.searchParams.get('localization')).toBe('false')
+      expect(url.searchParams.get('tickers')).toBe('false')
+      expect(result).toEqual(mockCoinDetails)
     })
 
     it('throws when the response is not ok', async () => {
       fetchMock.mockResolvedValue({ ok: false })
 
       await expect(fetchCoinDetails('bitcoin')).rejects.toThrow('Failed to fetch coin details')
+    })
+  })
+
+  describe('fetchCoinOhlc', () => {
+    it('requests OHLC candles for the timeframe', async () => {
+      const ohlcRows = mockCoinOhlc.map((c) => [c.timestamp, c.open, c.high, c.low, c.close])
+      fetchMock.mockResolvedValue({
+        ok: true,
+        json: async () => ohlcRows,
+      })
+
+      const result = await fetchCoinOhlc('bitcoin', '1d')
+
+      const url = new URL(fetchMock.mock.calls[0][0] as string)
+      expect(url.pathname).toBe('/functions/v1/coingecko/coins/bitcoin/ohlc')
+      expect(url.searchParams.get('vs_currency')).toBe('usd')
+      expect(url.searchParams.get('days')).toBe('30')
+      expect(result).toEqual(mockCoinOhlc)
+    })
+
+    it('throws when the response is not ok', async () => {
+      fetchMock.mockResolvedValue({ ok: false })
+
+      await expect(fetchCoinOhlc('bitcoin', '1w')).rejects.toThrow('Failed to fetch coin OHLC')
     })
   })
 })

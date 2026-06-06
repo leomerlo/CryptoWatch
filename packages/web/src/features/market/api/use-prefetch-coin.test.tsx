@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { coinDetailQueryOptions } from '@/features/market/api/coins.options'
 import { usePrefetchCoin } from '@/features/market/api/use-prefetch-coin'
 import { coinsKeys } from '@/features/market/api/coins.keys'
-import { mockCoin } from '@/test/fixtures/market'
+import { mockCoinDetails } from '@/test/fixtures/market'
 import { createTestQueryClient } from '@/test/create-test-query-client'
 import { TestProviders } from '@/test/test-providers'
 
@@ -16,7 +16,7 @@ vi.mock('@/features/market/api/coins.api', () => ({
 
 describe('usePrefetchCoin', () => {
   it('prefetches coin details when data is not cached', async () => {
-    fetchCoinDetailsMock.mockResolvedValue(mockCoin)
+    fetchCoinDetailsMock.mockResolvedValue(mockCoinDetails)
     const queryClient = createTestQueryClient()
 
     const { result } = renderHook(() => usePrefetchCoin(), {
@@ -28,13 +28,13 @@ describe('usePrefetchCoin', () => {
     result.current('bitcoin')
 
     await waitFor(() => {
-      expect(queryClient.getQueryData(coinsKeys.detail('bitcoin'))).toEqual(mockCoin)
+      expect(queryClient.getQueryData(coinsKeys.detail('bitcoin'))).toEqual(mockCoinDetails)
     })
     expect(fetchCoinDetailsMock).toHaveBeenCalledWith('bitcoin')
   })
 
   it('does not prefetch when data is already cached', async () => {
-    fetchCoinDetailsMock.mockResolvedValue(mockCoin)
+    fetchCoinDetailsMock.mockResolvedValue(mockCoinDetails)
     const queryClient = createTestQueryClient()
 
     await queryClient.prefetchQuery(coinDetailQueryOptions('bitcoin'))

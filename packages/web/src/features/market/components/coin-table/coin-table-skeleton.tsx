@@ -41,12 +41,7 @@ const CoinTableSkeletonRow = () => (
 )
 
 const CoinTableSkeleton = () => (
-  <div
-    className="relative overflow-x-auto flex flex-col gap-2"
-    role="status"
-    aria-busy="true"
-    aria-label="Loading coins table"
-  >
+  <div className="w-full min-w-0" role="status" aria-busy="true" aria-label="Loading coins table">
     <Table>
       <TableHeader>
         <TableRow>
