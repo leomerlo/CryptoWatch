@@ -18,6 +18,7 @@ const CoinFilters = ({ filters, setFilters }: CoinFiltersProps) => {
     <div className="flex gap-0.5 bg-muted/50 border border-muted rounded-lg p-0.5 w-auto">
       {categories.map((category) => (
         <Button
+          key={category.value}
           variant="ghost"
           size="xs"
           onClick={() => setFilters({ category: category.value })}
