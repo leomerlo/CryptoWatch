@@ -11,7 +11,9 @@ export default defineConfig({
       target: 'react',
       autoCodeSplitting: true,
     }),
-    react(), tailwindcss()],
+    react(),
+    tailwindcss(),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
