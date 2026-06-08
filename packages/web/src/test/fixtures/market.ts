@@ -37,6 +37,7 @@ export const mockCoinGeckoDetailRaw = {
   market_data: {
     current_price: { usd: 50_000 },
     market_cap: { usd: 1_000_000_000_000 },
+    market_cap_rank: 1,
     total_volume: { usd: 50_000_000_000 },
     ath: { usd: 69_000 },
     ath_date: { usd: '2021-11-10T14:24:11.849Z' },
@@ -55,6 +56,7 @@ export const mockCoinDetails: CoinDetails = {
   image: 'https://example.com/btc.png',
   currentPrice: 50_000,
   marketCap: 1_000_000_000_000,
+  marketCapRank: 1,
   volume24h: 50_000_000_000,
   ath: { price: 69_000, date: '2021-11-10T14:24:11.849Z' },
   atl: { price: 67.81, date: '2013-07-06T00:00:00.000Z' },
