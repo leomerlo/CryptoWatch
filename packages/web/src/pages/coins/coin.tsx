@@ -9,6 +9,10 @@ import CoinOhlcChart from '@/features/market/components/coin-detail/coin-ohlc-ch
 import { ArrowLeftIcon, BellIcon, StarIcon } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
 import { formatCurrency } from '@/shared/utils'
+import CoinPageSkeleton, {
+  CoinChartSkeleton,
+} from '@/features/market/components/coin-detail/coin-page-skeleton'
+import { ErrorState } from '@/shared/components/ui/error-state'
 
 const coinRoute = getRouteApi('/coins/$coinId')
 
@@ -16,7 +20,7 @@ const CoinPage = () => {
   const { coinId } = coinRoute.useParams()
   const [timeframe, setTimeframe] = useState<CoinHistoryTimeframe>('1d')
 
-  const { data: coin, isLoading, isError, error } = useCoin(coinId)
+  const { data: coin, isLoading, isError, error, refetch } = useCoin(coinId)
   const {
     data: candles,
     isLoading: isChartLoading,
@@ -24,9 +28,16 @@ const CoinPage = () => {
     error: chartError,
   } = useCoinHistory(coinId, timeframe)
 
-  if (isLoading) return <div>Loading...</div>
-  if (isError) return <div>Error: {error.message}</div>
-  if (!coin) return <div>No data</div>
+  if (isLoading) return <CoinPageSkeleton />
+  if (isError)
+    return (
+      <ErrorState
+        title="Error loading coin"
+        description={error?.message}
+        onRetry={() => refetch()}
+      />
+    )
+  if (!coin) return <ErrorState title="No data" description="No data found" />
 
   return (
     <div className="flex flex-col gap-6">
@@ -75,9 +86,7 @@ const CoinPage = () => {
           <CoinHistoryTimeframeSelector value={timeframe} onChange={setTimeframe} />
         </div>
         {isChartLoading ? (
-          <div className="h-60 flex items-center justify-center text-gray-500">
-            Loading chart...
-          </div>
+          <CoinChartSkeleton />
         ) : isChartError ? (
           <div className="h-60 flex items-center justify-center text-red-500">
             {chartError.message}
