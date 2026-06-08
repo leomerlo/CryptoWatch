@@ -17,6 +17,8 @@ export const useAppStore = create<AppStore>()(
       name: 'cw-ui',
       partialize: (state: AppStore) => ({
         theme: state.theme,
+        currency: state.currency,
+        autoRefresh: state.autoRefresh,
         marketSorting: state.marketSorting,
       }),
     }
