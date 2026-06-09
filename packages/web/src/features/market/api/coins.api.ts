@@ -11,7 +11,7 @@ export async function fetchCoinsList(params: CoinsListParams): Promise<Coin[]> {
   const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coingecko/coins/markets`)
   url.searchParams.set('page', page?.toString() ?? '1')
   url.searchParams.set('per_page', perPage?.toString() ?? '20')
-  url.searchParams.set('vs_currency', currency ?? 'usd')
+  url.searchParams.set('vs_currency', (currency ?? 'USD').toLowerCase())
   url.searchParams.set('sparkline', 'true')
   url.searchParams.set('price_change_percentage', '24h')
   url.searchParams.set('order', 'market_cap_desc')
@@ -34,7 +34,7 @@ export async function fetchCoinDetails(id: string, currency: Currency): Promise<
   url.searchParams.set('market_data', 'true')
   url.searchParams.set('community_data', 'false')
   url.searchParams.set('developer_data', 'false')
-  url.searchParams.set('vs_currency', currency)
+  url.searchParams.set('vs_currency', currency.toLowerCase())
 
   const res = await fetch(url.toString())
   if (!res.ok) throw new Error('Failed to fetch coin details')
@@ -51,7 +51,7 @@ export async function fetchCoinOhlc(
   const url = new URL(
     `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coingecko/coins/${id}/ohlc`
   )
-  url.searchParams.set('vs_currency', currency)
+  url.searchParams.set('vs_currency', currency.toLowerCase())
   url.searchParams.set('days', OHLC_DAYS_BY_TIMEFRAME[timeframe].toString())
 
   const res = await fetch(url.toString())

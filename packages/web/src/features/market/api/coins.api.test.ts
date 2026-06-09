@@ -96,7 +96,7 @@ describe('coins.api', () => {
       expect(url.pathname).toBe('/functions/v1/coingecko/coins/bitcoin')
       expect(url.searchParams.get('localization')).toBe('false')
       expect(url.searchParams.get('tickers')).toBe('false')
-      expect(url.searchParams.get('vs_currency')).toBe('USD')
+      expect(url.searchParams.get('vs_currency')).toBe('usd')
       expect(result).toEqual(mockCoinDetails)
     })
 
@@ -121,7 +121,7 @@ describe('coins.api', () => {
 
       const url = new URL(fetchMock.mock.calls[0][0] as string)
       expect(url.pathname).toBe('/functions/v1/coingecko/coins/bitcoin/ohlc')
-      expect(url.searchParams.get('vs_currency')).toBe('USD')
+      expect(url.searchParams.get('vs_currency')).toBe('usd')
       expect(url.searchParams.get('days')).toBe('30')
       expect(result).toEqual(mockCoinOhlc)
     })

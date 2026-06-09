@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest'
 import { coinsKeys } from '@/features/market/api/coins.keys'
 
 describe('coinsKeys', () => {
-  it('builds stable list keys from params', () => {
+  it('builds stable list keys from params without refetch interval', () => {
     const params = {
       page: 1,
       perPage: 250,
       filters: { category: 'all' },
-      refetchInterval: 30 as const,
+      currency: 'USD' as const,
     }
 
     expect(coinsKeys.list(params)).toEqual(['coins', 'list', params])

@@ -38,6 +38,7 @@ describe('global.api', () => {
     expect(fetchMock).toHaveBeenCalledOnce()
     const url = new URL(fetchMock.mock.calls[0][0] as string)
     expect(url.pathname).toBe('/functions/v1/coingecko/global')
+    expect(url.searchParams.get('vs_currency')).toBe('usd')
     expect(result).toEqual({
       totalMarketCap: 2_500_000_000_000,
       volume24h: 120_000_000_000,

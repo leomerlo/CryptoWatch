@@ -5,14 +5,15 @@ import { fetchCoinDetails, fetchCoinOhlc, fetchCoinsList } from '@/features/mark
 import type { Currency } from '@/shared/slices/ui-slice'
 
 export function coinsListQueryOptions(params: CoinsListParams) {
+  const { refetchInterval, ...keyParams } = params
   return queryOptions({
-    queryKey: coinsKeys.list(params),
+    queryKey: coinsKeys.list(keyParams),
     queryFn: () => fetchCoinsList(params),
     staleTime: 60_000,
     gcTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnMount: false,
-    refetchInterval: params.refetchInterval * 1000,
+    refetchInterval: refetchInterval * 1000,
   })
 }
 

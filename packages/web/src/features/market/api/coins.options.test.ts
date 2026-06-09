@@ -14,7 +14,9 @@ describe('coins.options', () => {
     }
     const options = coinsListQueryOptions(params)
 
-    expect(options.queryKey).toEqual(coinsKeys.list(params))
+    expect(options.queryKey).toEqual(
+      coinsKeys.list({ page: 1, perPage: 250, filters: { category: 'all' }, currency: 'USD' })
+    )
     expect(options.staleTime).toBe(60_000)
     expect(options.gcTime).toBe(5 * 60 * 1000)
     expect(options.refetchOnWindowFocus).toBe(true)

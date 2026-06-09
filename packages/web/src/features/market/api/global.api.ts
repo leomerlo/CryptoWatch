@@ -3,7 +3,7 @@ import type { Currency } from '@/shared/slices/ui-slice'
 
 export async function fetchGlobalMarket(currency: Currency) {
   const url = new URL(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/coingecko/global`)
-  url.searchParams.set('vs_currency', currency)
+  url.searchParams.set('vs_currency', currency.toLowerCase())
 
   const res = await fetch(url)
   if (!res.ok) throw new Error('Failed to fetch global market data')
