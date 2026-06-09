@@ -33,7 +33,7 @@ describe('global.api', () => {
       json: async () => globalPayload,
     })
 
-    const result = await fetchGlobalMarket('usd')
+    const result = await fetchGlobalMarket('USD')
 
     expect(fetchMock).toHaveBeenCalledOnce()
     const url = new URL(fetchMock.mock.calls[0][0] as string)
@@ -51,6 +51,6 @@ describe('global.api', () => {
   it('throws when the response is not ok', async () => {
     fetchMock.mockResolvedValue({ ok: false })
 
-    await expect(fetchGlobalMarket()).rejects.toThrow('Failed to fetch global market data')
+    await expect(fetchGlobalMarket('USD')).rejects.toThrow('Failed to fetch global market data')
   })
 })

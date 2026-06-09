@@ -13,6 +13,8 @@ const prefetchCoinMock = vi.fn()
 const storeState = vi.hoisted(() => ({
   marketSorting: [] as SortingState,
   setMarketSorting: vi.fn(),
+  currency: 'USD' as const,
+  autoRefresh: 30 as const,
 }))
 
 vi.mock('@/stores', () => ({
@@ -132,6 +134,8 @@ describe('CoinTableSection', () => {
       page: 1,
       perPage: 250,
       filters: { category: 'all' },
+      currency: 'USD',
+      refetchInterval: 30,
     })
   })
 
@@ -187,6 +191,8 @@ describe('CoinTableSection', () => {
       page: 1,
       perPage: 250,
       filters: { category: 'decentralized-finance-defi' },
+      currency: 'USD',
+      refetchInterval: 30,
     })
   })
 

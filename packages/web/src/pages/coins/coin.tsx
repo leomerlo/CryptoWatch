@@ -13,20 +13,21 @@ import CoinPageSkeleton, {
   CoinChartSkeleton,
 } from '@/features/market/components/coin-detail/coin-page-skeleton'
 import { ErrorState } from '@/shared/components/ui/error-state'
+import { useAppStore } from '@/stores'
 
 const coinRoute = getRouteApi('/coins/$coinId')
 
 const CoinPage = () => {
   const { coinId } = coinRoute.useParams()
   const [timeframe, setTimeframe] = useState<CoinHistoryTimeframe>('1d')
-
-  const { data: coin, isLoading, isError, error, refetch } = useCoin(coinId)
+  const currency = useAppStore((state) => state.currency)
+  const { data: coin, isLoading, isError, error, refetch } = useCoin(coinId, currency)
   const {
     data: candles,
     isLoading: isChartLoading,
     isError: isChartError,
     error: chartError,
-  } = useCoinHistory(coinId, timeframe)
+  } = useCoinHistory(coinId, timeframe, currency)
 
   if (isLoading) return <CoinPageSkeleton />
   if (isError)
@@ -64,7 +65,7 @@ const CoinPage = () => {
               )}
             </div>
             <div className="text-white text-4xl font-bold tracking-wide!">
-              {formatCurrency(coin.currentPrice, 'USD', false)}
+              {formatCurrency(coin.currentPrice, currency, false)}
             </div>
           </div>
         </div>

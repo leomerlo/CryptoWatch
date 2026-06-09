@@ -28,7 +28,7 @@ export const createUISlice: StateCreator<AppStore, [['zustand/devtools', unknown
     set((state) => ({ ...state, currency }), false, 'ui/setCurrency')
   },
   autoRefresh: 30,
-  setAutoRefresh: (autoRefresh: number) => {
+  setAutoRefresh: (autoRefresh: AutoRefresh) => {
     set((state) => ({ ...state, autoRefresh }), false, 'ui/setAutoRefresh')
   },
   marketSorting: [],

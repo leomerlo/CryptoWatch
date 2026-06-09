@@ -20,10 +20,14 @@ export const CoinTableSection = () => {
   const [filters, setFilters] = useState<Record<string, unknown>>({ category: 'all' })
   const marketSorting = useAppStore((s) => s.marketSorting)
   const setMarketSorting = useAppStore((s) => s.setMarketSorting)
+  const currency = useAppStore((s) => s.currency)
+  const autoRefresh = useAppStore((s) => s.autoRefresh)
   const { data, isLoading, error, dataUpdatedAt, refetch } = useCoins({
     page: 1,
     perPage: TOTAL_QUERY,
     filters,
+    currency,
+    refetchInterval: autoRefresh,
   })
   const prefetchCoin = usePrefetchCoin()
   const debouncedSearch = useDebounce(search, 500)
@@ -69,7 +73,13 @@ export const CoinTableSection = () => {
         </div>
         <div className="flex min-w-0 items-center gap-2">
           <CoinSearch search={search} setSearch={handleSearchChange} />
-          {dataUpdatedAt && <CoinUpdateCountdown key={dataUpdatedAt} resetAt={dataUpdatedAt} />}
+          {dataUpdatedAt && (
+            <CoinUpdateCountdown
+              key={dataUpdatedAt}
+              resetAt={dataUpdatedAt}
+              durationMs={autoRefresh * 1000}
+            />
+          )}
         </div>
       </div>
       {isLoading ? (

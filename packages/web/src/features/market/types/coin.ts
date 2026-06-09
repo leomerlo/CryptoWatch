@@ -1,3 +1,4 @@
+import type { Currency } from '@/shared/slices/ui-slice'
 import { z } from 'zod'
 
 export const CoinSchema = z.object({
@@ -8,7 +9,7 @@ export const CoinSchema = z.object({
   current_price: z.number(),
   market_cap: z.number(),
   market_cap_rank: z.number().nullable(),
-  total_volume: z.number(),
+  total_volume: z.number().nullable(),
   price_change_percentage_24h: z.number().nullable(),
   sparkline_in_7d: z.object({ price: z.array(z.number()) }).nullable(),
 })
@@ -60,15 +61,15 @@ export type CoinDetails = {
   maxSupply: number | null
 }
 
-function usd(map: Record<string, number>): number {
-  return map.usd ?? 0
+function currencyMap(map: Record<string, number>, currency: Currency): number {
+  return map[currency.toLowerCase()] ?? 0
 }
 
-function usdDate(map: Record<string, string>): string {
-  return map.usd ?? ''
+function currencyDate(map: Record<string, string>, currency: Currency): string {
+  return map[currency.toLowerCase()] ?? ''
 }
 
-export function parseCoinDetails(data: unknown): CoinDetails {
+export function parseCoinDetails(data: unknown, currency: Currency): CoinDetails {
   const raw = CoinGeckoDetailSchema.parse(data)
   const { market_data: md } = raw
 
@@ -77,12 +78,12 @@ export function parseCoinDetails(data: unknown): CoinDetails {
     symbol: raw.symbol,
     name: raw.name,
     image: raw.image.large,
-    currentPrice: usd(md.current_price),
-    marketCap: usd(md.market_cap),
+    currentPrice: currencyMap(md.current_price, currency),
+    marketCap: currencyMap(md.market_cap, currency),
     marketCapRank: md.market_cap_rank ?? null,
-    volume24h: usd(md.total_volume),
-    ath: { price: usd(md.ath), date: usdDate(md.ath_date) },
-    atl: { price: usd(md.atl), date: usdDate(md.atl_date) },
+    volume24h: currencyMap(md.total_volume, currency),
+    ath: { price: currencyMap(md.ath, currency), date: currencyDate(md.ath_date, currency) },
+    atl: { price: currencyMap(md.atl, currency), date: currencyDate(md.atl_date, currency) },
     circulatingSupply: md.circulating_supply,
     maxSupply: md.max_supply_infinite ? null : md.max_supply,
   }

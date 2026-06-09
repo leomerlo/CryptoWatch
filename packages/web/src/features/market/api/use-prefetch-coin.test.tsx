@@ -11,7 +11,7 @@ import { TestProviders } from '@/test/test-providers'
 const fetchCoinDetailsMock = vi.fn()
 
 vi.mock('@/features/market/api/coins.api', () => ({
-  fetchCoinDetails: (id: string) => fetchCoinDetailsMock(id),
+  fetchCoinDetails: (id: string, currency: string) => fetchCoinDetailsMock(id, currency),
 }))
 
 describe('usePrefetchCoin', () => {
@@ -28,16 +28,16 @@ describe('usePrefetchCoin', () => {
     result.current('bitcoin')
 
     await waitFor(() => {
-      expect(queryClient.getQueryData(coinsKeys.detail('bitcoin'))).toEqual(mockCoinDetails)
+      expect(queryClient.getQueryData(coinsKeys.detail('bitcoin', 'USD'))).toEqual(mockCoinDetails)
     })
-    expect(fetchCoinDetailsMock).toHaveBeenCalledWith('bitcoin')
+    expect(fetchCoinDetailsMock).toHaveBeenCalledWith('bitcoin', 'USD')
   })
 
   it('does not prefetch when data is already cached', async () => {
     fetchCoinDetailsMock.mockResolvedValue(mockCoinDetails)
     const queryClient = createTestQueryClient()
 
-    await queryClient.prefetchQuery(coinDetailQueryOptions('bitcoin'))
+    await queryClient.prefetchQuery(coinDetailQueryOptions('bitcoin', 'USD'))
     fetchCoinDetailsMock.mockClear()
 
     const { result } = renderHook(() => usePrefetchCoin(), {
