@@ -3,6 +3,7 @@ import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { CoinOhlcCandle } from '@/features/market/types/coin'
 import { cn } from '@/shared/lib/utils'
 import { formatCurrency } from '@/shared/utils'
+import { useAppStore } from '@/stores'
 
 type CoinOhlcChartProps = {
   candles: CoinOhlcCandle[]
@@ -48,6 +49,7 @@ function CoinOhlcChart({
 }: CoinOhlcChartProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [measuredWidth, setMeasuredWidth] = useState(0)
+  const currency = useAppStore((state) => state.currency)
 
   useLayoutEffect(() => {
     if (widthOverride != null) return
@@ -170,7 +172,7 @@ function CoinOhlcChart({
                 fill={LABEL_COLOR}
                 fontSize="10"
               >
-                {formatCurrency(price, 'USD', true)}
+                {formatCurrency(price, currency, true)}
               </text>
             </g>
           )

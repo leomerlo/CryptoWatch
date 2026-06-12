@@ -5,7 +5,7 @@ import { mockCoinDetails, mockCoinGeckoDetailRaw, mockCoinOhlc } from '@/test/fi
 
 describe('coin types', () => {
   it('parses CoinGecko detail payload into flat CoinDetails', () => {
-    expect(parseCoinDetails(mockCoinGeckoDetailRaw)).toEqual(mockCoinDetails)
+    expect(parseCoinDetails(mockCoinGeckoDetailRaw, 'USD')).toEqual(mockCoinDetails)
   })
 
   it('parses OHLC rows into candle objects', () => {

@@ -22,6 +22,9 @@ import {
   type SortingState,
 } from '@tanstack/react-table'
 import { EyeIcon, SearchIcon } from 'lucide-react'
+import type { Currency } from '@/shared/slices/ui-slice'
+import { useMemo } from 'react'
+import { useAppStore } from '@/stores'
 
 export type CoinTableProps = {
   data: Coin[]
@@ -34,92 +37,100 @@ export type CoinTableProps = {
 
 const columnHelper = createColumnHelper<Coin>()
 
-const columns = [
-  columnHelper.accessor('market_cap_rank', {
-    header: '#',
-    cell: ({ row }) => row.original.market_cap_rank ?? '—',
-    sortDescFirst: true,
-  }),
-  columnHelper.accessor('name', {
-    header: 'Name',
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <Link to={`/coins/$coinId`} params={{ coinId: row.original.id }}>
-          <span className="text-xs font-bold tracking-tight text-white underline block overflow-hidden text-ellipsis whitespace-nowrap">
-            {row.original.name}
+function createColumns(currency: Currency) {
+  return [
+    columnHelper.accessor('market_cap_rank', {
+      header: '#',
+      cell: ({ row }) => row.original.market_cap_rank ?? '—',
+      sortDescFirst: true,
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <Link to={`/coins/$coinId`} params={{ coinId: row.original.id }}>
+            <span className="text-xs font-bold tracking-tight text-white underline block overflow-hidden text-ellipsis whitespace-nowrap">
+              {row.original.name}
+            </span>
+          </Link>
+          <span className="text-2xs font-normal text-gray-500 uppercase">
+            {row.original.symbol}
           </span>
+        </div>
+      ),
+    }),
+    columnHelper.accessor('current_price', {
+      header: 'Price',
+      cell: ({ row }) => (
+        <span className="text-white font-bold tracking-tight">
+          {formatCurrency(row.original.current_price, currency)}
+        </span>
+      ),
+    }),
+    columnHelper.accessor('price_change_percentage_24h', {
+      header: '24h',
+      cell: ({ row }) => (
+        <span
+          className={cn(
+            'font-bold',
+            row.original.price_change_percentage_24h && row.original.price_change_percentage_24h > 0
+              ? 'text-green-500'
+              : 'text-red-500'
+          )}
+        >
+          {row.original.price_change_percentage_24h && row.original.price_change_percentage_24h > 0
+            ? '+'
+            : ''}
+          {row.original.price_change_percentage_24h &&
+            row.original.price_change_percentage_24h.toFixed(1)}
+          %
+        </span>
+      ),
+    }),
+    columnHelper.accessor('market_cap', {
+      header: 'Mkt Cap',
+      cell: ({ row }) => (
+        <span className="tracking-tight">
+          {formatCurrency(row.original.market_cap, currency, true)}
+        </span>
+      ),
+    }),
+    columnHelper.accessor('total_volume', {
+      header: 'Volume',
+      cell: ({ row }) => (
+        <span className="text-xs tracking-tight">
+          {row.original.total_volume != null
+            ? formatCurrency(row.original.total_volume, currency, true)
+            : '—'}
+        </span>
+      ),
+    }),
+    columnHelper.accessor('sparkline_in_7d', {
+      header: '7d',
+      cell: ({ row }) => (
+        <CoinSparkline
+          prices={row.original.sparkline_in_7d?.price}
+          positive={
+            row.original.price_change_percentage_24h != null
+              ? row.original.price_change_percentage_24h >= 0
+              : null
+          }
+        />
+      ),
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <Link to={`/coins/$coinId`} params={{ coinId: row.original.id }}>
+          <Button variant="ghost" size="icon">
+            <EyeIcon className="w-4 h-4" />
+          </Button>
         </Link>
-        <span className="text-2xs font-normal text-gray-500 uppercase">{row.original.symbol}</span>
-      </div>
-    ),
-  }),
-  columnHelper.accessor('current_price', {
-    header: 'Price',
-    cell: ({ row }) => (
-      <span className="text-white font-bold tracking-tight">
-        {formatCurrency(row.original.current_price, 'USD')}
-      </span>
-    ),
-  }),
-  columnHelper.accessor('price_change_percentage_24h', {
-    header: '24h',
-    cell: ({ row }) => (
-      <span
-        className={cn(
-          'font-bold',
-          row.original.price_change_percentage_24h && row.original.price_change_percentage_24h > 0
-            ? 'text-green-500'
-            : 'text-red-500'
-        )}
-      >
-        {row.original.price_change_percentage_24h && row.original.price_change_percentage_24h > 0
-          ? '+'
-          : ''}
-        {row.original.price_change_percentage_24h &&
-          row.original.price_change_percentage_24h.toFixed(1)}
-        %
-      </span>
-    ),
-  }),
-  columnHelper.accessor('market_cap', {
-    header: 'Mkt Cap',
-    cell: ({ row }) => (
-      <span className="tracking-tight">{formatCurrency(row.original.market_cap, 'USD', true)}</span>
-    ),
-  }),
-  columnHelper.accessor('total_volume', {
-    header: 'Volume',
-    cell: ({ row }) => (
-      <span className="text-xs tracking-tight">
-        {formatCurrency(row.original.total_volume, 'USD', true)}
-      </span>
-    ),
-  }),
-  columnHelper.accessor('sparkline_in_7d', {
-    header: '7d',
-    cell: ({ row }) => (
-      <CoinSparkline
-        prices={row.original.sparkline_in_7d?.price}
-        positive={
-          row.original.price_change_percentage_24h != null
-            ? row.original.price_change_percentage_24h >= 0
-            : null
-        }
-      />
-    ),
-  }),
-  columnHelper.display({
-    id: 'actions',
-    header: 'Actions',
-    cell: ({ row }) => (
-      <Link to={`/coins/$coinId`} params={{ coinId: row.original.id }}>
-        <Button variant="ghost" size="icon">
-          <EyeIcon className="w-4 h-4" />
-        </Button>
-      </Link>
-    ),
-  }),
-]
+      ),
+    }),
+  ]
+}
 
 const CoinTable = ({
   data,
@@ -129,6 +140,9 @@ const CoinTable = ({
   perPage,
   onRowHover,
 }: CoinTableProps) => {
+  const currency = useAppStore((s) => s.currency)
+  const columns = useMemo(() => createColumns(currency), [currency])
+
   // TanStack Table returns unstable function refs; safe to use here without memoization.
   // eslint-disable-next-line react-hooks/incompatible-library -- useReactTable
   const table = useReactTable({

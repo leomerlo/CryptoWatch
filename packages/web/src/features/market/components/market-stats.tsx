@@ -1,5 +1,6 @@
 import { useGlobalMarket } from '@/features/market/api/use-global'
 import { formatCurrency } from '@/shared/utils'
+import { useAppStore } from '@/stores'
 
 const MarketStatsCardClassName =
   'flex-1 py-2 px-4 border border-border rounded-lg bg-table-background flex flex-col text-left'
@@ -23,8 +24,8 @@ const MarketStatCard = ({ title, value }: { title: string; value: string }) => {
 }
 
 const MarketStats = () => {
-  const { data, isLoading, error } = useGlobalMarket()
-
+  const currency = useAppStore((state) => state.currency)
+  const { data, isLoading, error } = useGlobalMarket(currency)
   if (isLoading)
     return (
       <div className="flex gap-4">
@@ -40,9 +41,9 @@ const MarketStats = () => {
     <div className="flex gap-4">
       <MarketStatCard
         title="Total Market Cap"
-        value={formatCurrency(data?.totalMarketCap, 'USD', true)}
+        value={formatCurrency(data?.totalMarketCap, currency, true)}
       />
-      <MarketStatCard title="Volume 24h" value={formatCurrency(data?.volume24h, 'USD', true)} />
+      <MarketStatCard title="Volume 24h" value={formatCurrency(data?.volume24h, currency, true)} />
       <MarketStatCard title="BTC Dominance" value={data?.btcDominance.toFixed(2) + '%'} />
     </div>
   )

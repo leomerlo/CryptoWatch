@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { SortingState } from '@tanstack/react-table'
 import { describe, expect, it, vi } from 'vitest'
 
 import CoinTable from '@/features/market/components/coin-table/coin-table'
@@ -11,7 +12,7 @@ vi.mock('@tanstack/react-router', () => ({
 
 const defaultProps = {
   data: [mockCoin],
-  sorting: [] as const,
+  sorting: [] as SortingState,
   onSortingChange: vi.fn(),
   page: 1,
   perPage: 20,

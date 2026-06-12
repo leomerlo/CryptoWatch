@@ -28,7 +28,13 @@ function AvatarMenu() {
 
   if (!session)
     return (
-      <Button variant="outline" size="icon" className="w-8 h-8 rounded-lg" aria-label="Login">
+      <Button
+        variant="outline"
+        size="icon"
+        className="w-8 h-8 rounded-lg"
+        aria-label="Login"
+        onClick={() => navigate({ to: '/login' })}
+      >
         <UserIcon className="w-4 h-4" />
       </Button>
     )
